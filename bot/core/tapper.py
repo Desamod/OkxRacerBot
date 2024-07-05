@@ -318,7 +318,7 @@ class Tapper:
                 info_data = await self.get_info_data(http_client=http_client)
 
                 # boost flow
-                if settings.AUTO_BOOST:
+                if settings.BUY_BOOST:
                     if info_data['info'].get('boost') is None or info_data['info']['active_booster_finish_at'] < time():
                         await asyncio.sleep(delay=randint(3, 8))
                         await self.buy_boost(http_client=http_client, balance=info_data['balance'])
