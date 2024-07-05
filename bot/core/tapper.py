@@ -1,6 +1,6 @@
 import asyncio
 from time import time
-from urllib.parse import unquote, quote
+from urllib.parse import unquote
 
 import aiohttp
 from aiocfscrape import CloudflareScraper
@@ -17,8 +17,8 @@ from bot.config import settings
 from bot.utils import logger
 from bot.exceptions import InvalidSession
 from .headers import headers
-from datetime import datetime, timezone, timedelta
-import pytz
+from datetime import timedelta
+
 from random import randint
 
 
