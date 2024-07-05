@@ -1,4 +1,4 @@
-[![Static Badge](https://img.shields.io/badge/Telegram-Bot%20Link-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/MMproBump_bot?start=ref_7220703011)
+[![Static Badge](https://img.shields.io/badge/Telegram-Bot%20Link-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/MMproBump_bot?start=ref_7420057470)
 
 ## Recommendation before use
 
@@ -20,7 +20,7 @@
 | Auto-daily                                                |     ✅     |
 
 
-## [Settings](https://github.com/Desamod/MMproBump_bot/blob/main/.env-example/)
+## [Settings](https://github.com/Desamod/MMproBump_bot/blob/master/.env-example/)
 | Settings                |                                 Description                                 |
 |-------------------------|:---------------------------------------------------------------------------:|
 | **API_ID / API_HASH**   | Platform data from which to run the Telegram session (by default - android) |
