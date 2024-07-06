@@ -24,11 +24,11 @@
 | Settings                |                                 Description                                 |
 |-------------------------|:---------------------------------------------------------------------------:|
 | **API_ID / API_HASH**   | Platform data from which to run the Telegram session (by default - android) |
-| **TAPS_COUNT**          | How much clicks bot will get in farm cycle (by default - [500000, 1000000]) |
+| **TAPS_COUNT**          | How much clicks bot will get in farm cycle (by default - [100000, 500000])  |
 | **CLAIM_MOON**          |                Collecting a farm bonus  (by default - True)                 |
 | **MOON_BONUS**          |                   Moon-Bonus count (by default - 1000000)                   |
 | **BUY_BOOST**           |                     Buying a boost (by default - True)                      |
-| **DEFAULT_BOOST**       |                       Boost type (by default - "x5")                        |
+| **DEFAULT_BOOST**       |               Boost type ("x2"/"x3"/"x5") (by default - "x5")               |
 | **AUTO_TASK**           |                 Auto tasks (Twitter only) (default - True)                  |
 | **USE_REF**             |                      Using a ref link (default - True)                      |
 | **USE_PROXY_FROM_FILE** | Whether to use a proxy from the bot/config/proxies.txt file (True / False)  |

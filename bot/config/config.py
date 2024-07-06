@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     API_HASH: str
 
     FARM_TIME: int = 21600                # 6 hours
-    TAPS_COUNT: list[int] = [500000, 1000000]
+    TAPS_COUNT: list[int] = [100000, 500000]
     MOON_BONUS: int = 1000000
     BUY_BOOST: bool = True
     AUTO_TASK: bool = True
