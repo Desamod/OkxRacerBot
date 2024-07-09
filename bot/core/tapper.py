@@ -88,10 +88,11 @@ class Tapper:
                 string=unquote(
                     string=auth_url.split('tgWebAppData=', maxsplit=1)[1].split('&tgWebAppVersion', maxsplit=1)[0]))
 
+            user_id = tg_web_data.split('"id":')[1].split(',"first_name"')[0]
             if with_tg is False:
                 await self.tg_client.disconnect()
 
-            return tg_web_data
+            return tg_web_data, user_id
 
         except InvalidSession as error:
             raise error
@@ -103,7 +104,7 @@ class Tapper:
 
     async def login(self, http_client: aiohttp.ClientSession,  tg_web_data: str, retry=0):
         try:
-            response = await http_client.post('https://api.mmbump.pro/v1/login', json={'initData': tg_web_data})
+            response = await http_client.post('https://api.mmbump.pro/v1/loginJwt', json={'initData': tg_web_data})
             response.raise_for_status()
 
             response_json = await response.json()
@@ -282,11 +283,12 @@ class Tapper:
         while True:
             try:
                 if time() - access_token_created_time >= randint(3500, 3700):
-                    tg_web_data = await self.get_tg_web_data(proxy=proxy)
+                    tg_web_data, user_id = await self.get_tg_web_data(proxy=proxy)
+                    http_client.headers["User_auth:"] = user_id
                     login_data = await self.login(http_client=http_client, tg_web_data=tg_web_data)
 
                     if login_data:
-                        http_client.headers["Authorization"] = login_data['token']
+                        http_client.headers["Authorization"] = login_data["type"] + " " + login_data["access_token"]
                     else:
                         continue
 
