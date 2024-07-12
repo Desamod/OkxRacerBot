@@ -1,4 +1,7 @@
 import asyncio
+import hashlib
+import random
+import string
 from time import time
 from urllib.parse import unquote
 
@@ -123,7 +126,7 @@ class Tapper:
 
     async def get_info_data(self, http_client: aiohttp.ClientSession):
         try:
-            response = await http_client.get('https://api.mmbump.pro/v1/farming')
+            response = await http_client.post('https://api.mmbump.pro/v1/farming')
             response.raise_for_status()
 
             response_json = await response.json()
@@ -143,15 +146,21 @@ class Tapper:
 
     async def processing_tasks(self, http_client: aiohttp.ClientSession):
         try:
-            response = await http_client.get('https://api.mmbump.pro/v1/task-list')
+            hash_data = self.generate_random_hash()
+            response = await http_client.post('https://api.mmbump.pro/v1/task-list', json={'hash': hash_data})
             response.raise_for_status()
             response_json = await response.json()
 
             tasks = response_json
             for task in tasks:
-                if task['status'] == 'possible' and task['type'] == "twitter":    # only twitter tasks
+                if task['status'] == 'possible' and task['type'] == "twitter":  # only twitter tasks
+                    random_hash = self.generate_random_hash()
+                    json_data = {
+                        'id': task['id'],
+                        'hash': random_hash
+                    }
                     complete_resp = await http_client.post('https://api.mmbump.pro/v1/task-list/complete',
-                                                           json={'id': task['id']})
+                                                           json=json_data)
                     complete_resp.raise_for_status()
                     complete_json = await complete_resp.json()
                     task_json = complete_json['task']
@@ -167,6 +176,10 @@ class Tapper:
         except Exception as error:
             logger.error(f"{self.session_name} | Unknown error when completing tasks: {error}")
             await asyncio.sleep(delay=3)
+
+    def generate_random_hash(self):
+        random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=64))
+        return hashlib.sha256(random_string.encode()).hexdigest()
 
     async def claim_daily(self, http_client: aiohttp.ClientSession):
         try:
