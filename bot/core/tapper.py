@@ -164,14 +164,10 @@ class Tapper:
                     complete_resp.raise_for_status()
                     complete_json = await complete_resp.json()
                     task_json = complete_json['task']
-                    if task_json['status'] == 'done':
-                        logger.info(f"{self.session_name} | Task <e>{task['name']}</e> - Completed | Try to claim reward")
-                        new_balance = task_json['grant'] + complete_json['balance']
-                        claim_resp = await http_client.post('https://api.mmbump.pro/v1/task-list/claim',
-                                                               json={'balance': new_balance})
-                        claim_resp.raise_for_status()
-                        logger.success(f"{self.session_name} | Reward received | Balance: <e>{new_balance}</e>")
-                        await asyncio.sleep(delay=randint(3,7))
+                    if task_json['status'] == 'granted':
+                        logger.success(f"{self.session_name} | Task <e>{task['name']}</e> - Completed | "
+                                       f"Granted <c>{task['grant']}</c> | Balance: <e>{complete_json['balance']}</e>")
+                        await asyncio.sleep(delay=randint(3, 7))
 
         except Exception as error:
             logger.error(f"{self.session_name} | Unknown error when completing tasks: {error}")
@@ -358,7 +354,7 @@ class Tapper:
                             await asyncio.sleep(delay=randint(3, 5))
                             await self.start_farming(http_client=http_client)
                     else:
-                        sleep_time = sleep_time if finish_at > 3600 else finish_at - time()
+                        sleep_time = sleep_time if time_left > 3600 else time_left
                         logger.info(
                             f"{self.session_name} | Farming in progress, <light-yellow>{round(time_left / 60, 1)}</light-yellow> min before end")
 
