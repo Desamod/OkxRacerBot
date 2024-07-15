@@ -247,15 +247,21 @@ class Tapper:
             await asyncio.sleep(delay=3)
             return False
 
-    async def moon_claim(self, http_client: aiohttp.ClientSession, balance: int):
+    async def moon_claim(self, http_client: aiohttp.ClientSession, balance: int, retry: int = 0):
         try:
             balance += settings.MOON_BONUS
             response = await http_client.post('https://api.mmbump.pro/v1/farming/moon-claim', json={'balance': balance})
-            response.raise_for_status()
-            response_json = await response.json()
+            if response.status == 401 and retry < 3:
+                logger.warning(f"{self.session_name} | UnAuthorized error when Moon Claiming. Attempt {retry}...")
+                await asyncio.sleep(randint(5, 10))
+                retry += 1
+                await self.moon_claim(http_client=http_client, balance=balance, retry=retry)
+            else:
+                response.raise_for_status()
+                response_json = await response.json()
 
-            new_balance = response_json['balance']
-            logger.success(f"{self.session_name} | Moon bonus claimed | Balance: <e>{new_balance}</e>")
+                new_balance = response_json['balance']
+                logger.success(f"{self.session_name} | Moon bonus claimed | Balance: <e>{new_balance}</e>")
 
         except Exception as error:
             logger.error(f"{self.session_name} | Unknown error when Moon Claiming: {error}")
