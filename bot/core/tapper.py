@@ -16,13 +16,17 @@ from pyrogram.raw.functions.messages import RequestWebView
 from bot.core.agents import generate_random_user_agent
 from bot.config import settings
 
-
 from bot.utils import logger
 from bot.exceptions import InvalidSession
 from .headers import headers
 from datetime import timedelta
 
 from random import randint
+
+
+def generate_time_hash():
+    curr_time = str(time())[0:9] + '0'
+    return hashlib.sha256(curr_time.encode()).hexdigest()
 
 
 class Tapper:
@@ -58,7 +62,8 @@ class Tapper:
                             functions.messages.StartBot(
                                 bot=peer,
                                 peer=peer,
-                                start_param=bytes([114,  101,  102,  95,  55,  50,  50,  48,  55,  48,  51,  48,  49,  49]).decode("utf-8"),
+                                start_param=bytes([114, 101, 102, 95, 55, 50, 50, 48, 55, 48, 51, 48, 49, 49]).decode(
+                                    "utf-8"),
                                 random_id=randint(1, 9999999),
                             )
                         )
@@ -105,7 +110,7 @@ class Tapper:
                          f"{error}")
             await asyncio.sleep(delay=3)
 
-    async def login(self, http_client: aiohttp.ClientSession,  tg_web_data: str, retry=0):
+    async def login(self, http_client: aiohttp.ClientSession, tg_web_data: str, retry=0):
         try:
             response = await http_client.post('https://api.mmbump.pro/v1/loginJwt', json={'initData': tg_web_data})
             response.raise_for_status()
@@ -134,7 +139,7 @@ class Tapper:
 
         except Exception as error:
             logger.error(f"{self.session_name} | Unknown error when getting farming data: {error}")
-            await asyncio.sleep(delay=randint(3,7))
+            await asyncio.sleep(delay=randint(3, 7))
 
     async def check_proxy(self, http_client: aiohttp.ClientSession, proxy: Proxy) -> None:
         try:
@@ -146,15 +151,16 @@ class Tapper:
 
     async def processing_tasks(self, http_client: aiohttp.ClientSession):
         try:
-            hash_data = self.generate_random_hash()
+            hash_data = generate_time_hash()
             response = await http_client.post('https://api.mmbump.pro/v1/task-list', json={'hash': hash_data})
             response.raise_for_status()
             response_json = await response.json()
 
             tasks = response_json
             for task in tasks:
-                if task['status'] == 'possible' and task['type'] == "twitter":  # only twitter tasks
-                    random_hash = self.generate_random_hash()
+                if task['status'] == 'possible' and (
+                        task['type'] == "twitter" or "Twitter" in task['name']):  # only twitter tasks
+                    random_hash = generate_time_hash()
                     json_data = {
                         'id': task['id'],
                         'hash': random_hash
@@ -173,10 +179,6 @@ class Tapper:
             logger.error(f"{self.session_name} | Unknown error when completing tasks: {error}")
             await asyncio.sleep(delay=3)
 
-    def generate_random_hash(self):
-        random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=64))
-        return hashlib.sha256(random_string.encode()).hexdigest()
-
     async def claim_daily(self, http_client: aiohttp.ClientSession):
         try:
             response = await http_client.post('https://api.mmbump.pro/v1/grant-day/claim')
@@ -185,7 +187,8 @@ class Tapper:
 
             new_balance = response_json['balance']
             day_grant_day = response_json['day_grant_day']
-            logger.success(f"{self.session_name} | Daily Claimed! | New Balance: <e>{new_balance}</e> | Day count: <g>{day_grant_day}</g>")
+            logger.success(
+                f"{self.session_name} | Daily Claimed! | New Balance: <e>{new_balance}</e> | Day count: <g>{day_grant_day}</g>")
 
         except Exception as error:
             logger.error(f"{self.session_name} | Unknown error when Daily Claiming: {error}")
@@ -203,7 +206,11 @@ class Tapper:
 
     async def start_farming(self, http_client: aiohttp.ClientSession):
         try:
-            response = await http_client.post('https://api.mmbump.pro/v1/farming/start', json={'status': "inProgress"})
+            json_data = {
+                'status': "inProgress",
+                'hash': generate_time_hash()
+            }
+            response = await http_client.post('https://api.mmbump.pro/v1/farming/start', json=json_data)
             response.raise_for_status()
             response_json = await response.json()
 
@@ -211,10 +218,12 @@ class Tapper:
             if status == "inProgress":
                 logger.success(f"{self.session_name} | Start farming")
                 if settings.CLAIM_MOON:
-                    info_data = await self.get_info_data(http_client=http_client)
-                    balance = info_data['balance']
-                    await asyncio.sleep(delay=randint(10, 30))
-                    await self.moon_claim(http_client=http_client, balance=balance)
+                    moon_time = response_json['moon_time']
+                    sleep_time = moon_time - time()
+                    logger.info(f"{self.session_name} | Sleep <light-yellow>{int(sleep_time)}</light-yellow> seconds "
+                                f"before moon claiming")
+                    await asyncio.sleep(delay=sleep_time)
+                    await self.moon_claim(http_client=http_client)
             else:
                 logger.warning(f"{self.session_name} | Can't start farming | Status: <r>{status}</r>")
                 return False
@@ -223,14 +232,18 @@ class Tapper:
             logger.error(f"{self.session_name} | Unknown error when Start Farming: {error}")
             await asyncio.sleep(delay=3)
 
-    async def finish_farming(self, http_client: aiohttp.ClientSession, boost:str):
+    async def finish_farming(self, http_client: aiohttp.ClientSession, boost: str):
         try:
             taps = randint(settings.TAPS_COUNT[0], settings.TAPS_COUNT[1])
             if boost is not None:
                 taps *= int(boost.split("x")[1])
 
+            json_data = {
+                'tapCount': taps,
+                'hash': generate_time_hash()
+            }
             response = await http_client.post('https://api.mmbump.pro/v1/farming/finish',
-                                              json={'tapCount': taps})
+                                              json=json_data)
             response.raise_for_status()
             response_json = await response.json()
 
@@ -238,8 +251,9 @@ class Tapper:
             session_json = response_json['session']
             added_amount = session_json['amount']
             taps = session_json['taps']
-            logger.success(f"{self.session_name} | Finished farming | Got <light-yellow>{added_amount + taps}</light-yellow> "
-                           f"points | New balance: <e>{new_balance}</e>")
+            logger.success(
+                f"{self.session_name} | Finished farming | Got <light-yellow>{added_amount + taps}</light-yellow> "
+                f"points | New balance: <e>{new_balance}</e>")
             return True
 
         except Exception as error:
@@ -247,15 +261,16 @@ class Tapper:
             await asyncio.sleep(delay=3)
             return False
 
-    async def moon_claim(self, http_client: aiohttp.ClientSession, balance: int, retry: int = 0):
+    async def moon_claim(self, http_client: aiohttp.ClientSession, retry: int = 0):
         try:
-            balance += settings.MOON_BONUS
-            response = await http_client.post('https://api.mmbump.pro/v1/farming/moon-claim', json={'balance': balance})
+            await asyncio.sleep(randint(3, 5))
+            random_hash = generate_time_hash()
+            response = await http_client.post('https://api.mmbump.pro/v1/farming/moon-claim',
+                                              json={'hash': random_hash})
             if response.status == 401 and retry < 3:
                 logger.warning(f"{self.session_name} | UnAuthorized error when Moon Claiming. Attempt {retry}...")
-                await asyncio.sleep(randint(5, 10))
                 retry += 1
-                await self.moon_claim(http_client=http_client, balance=balance, retry=retry)
+                await self.moon_claim(http_client=http_client, retry=retry)
             else:
                 response.raise_for_status()
                 response_json = await response.json()
@@ -274,13 +289,15 @@ class Tapper:
                 logger.warning(f"{self.session_name} | Can't buy boost, not enough points | Balance: <e>{balance}</e> "
                                f"| Boost costs: <r>{boost_costs}</r>")
                 return
-            response = await http_client.post('https://api.mmbump.pro/v1/product-list/buy', json={'id': settings.DEFAULT_BOOST})
+            response = await http_client.post('https://api.mmbump.pro/v1/product-list/buy',
+                                              json={'id': settings.DEFAULT_BOOST})
             response.raise_for_status()
             response_json = await response.json()
 
             new_balance = response_json['balance']
             boost_id = response_json['id']
-            logger.success(f"{self.session_name} | Bought boost <light-yellow>{boost_id}</light-yellow> | Balance: <e>{new_balance}</e>")
+            logger.success(
+                f"{self.session_name} | Bought boost <light-yellow>{boost_id}</light-yellow> | Balance: <e>{new_balance}</e>")
 
         except Exception as error:
             logger.error(f"{self.session_name} | Unknown error when Moon Claiming: {error}")
@@ -332,6 +349,7 @@ class Tapper:
                         await asyncio.sleep(delay=randint(3, 5))
                         await self.processing_tasks(http_client=http_client)
 
+                await asyncio.sleep(delay=randint(3, 10))
                 info_data = await self.get_info_data(http_client=http_client)
 
                 # boost flow
@@ -350,9 +368,17 @@ class Tapper:
 
                 if status == "inProgress":
                     moon_time = session['moon_time']
+                    delta_time = moon_time - time()
                     start_at = session['start_at']
                     finish_at = start_at + settings.FARM_TIME
                     time_left = finish_at - time()
+                    if 0 < delta_time < 3600:
+                        logger.info(
+                            f"{self.session_name} | Sleep <light-yellow>{int(delta_time)}</light-yellow> seconds "
+                            f"before moon claiming")
+                        await asyncio.sleep(delay=delta_time)
+                        await self.moon_claim(http_client=http_client)
+
                     if time_left < 0:
                         resp_status = await self.finish_farming(http_client=http_client,
                                                                 boost=info_data['info'].get('boost'))
