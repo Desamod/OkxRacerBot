@@ -149,6 +149,21 @@ class Tapper:
         except Exception as error:
             logger.error(f"{self.session_name} | Proxy: {proxy} | Error: {error}")
 
+    async def refresh(self, http_client: aiohttp.ClientSession):
+        try:
+            response = await http_client.post('https://api.mmbump.pro/v1/auth/refresh')
+            response.raise_for_status()
+
+            response_json = await response.json()
+
+            response_ver = await http_client.get('https://mmbump.pro/version.json')
+            response_ver.raise_for_status()
+            return response_json
+
+        except Exception as error:
+            logger.error(f"{self.session_name} | Unknown error while refreshing auth: {error}")
+            await asyncio.sleep(delay=3)
+
     async def processing_tasks(self, http_client: aiohttp.ClientSession):
         try:
             hash_data = generate_time_hash()
@@ -204,7 +219,7 @@ class Tapper:
             logger.error(f"{self.session_name} | Unknown error when resetting Daily Reward: {error}")
             await asyncio.sleep(delay=3)
 
-    async def start_farming(self, http_client: aiohttp.ClientSession):
+    async def start_farming(self, http_client: aiohttp.ClientSession, token_time: int):
         try:
             json_data = {
                 'status': "inProgress",
@@ -220,13 +235,13 @@ class Tapper:
                 if settings.CLAIM_MOON:
                     moon_time = response_json['moon_time']
                     sleep_time = moon_time - time()
-                    logger.info(f"{self.session_name} | Sleep <light-yellow>{int(sleep_time)}</light-yellow> seconds "
-                                f"before moon claiming")
-                    await asyncio.sleep(delay=sleep_time)
-                    await self.moon_claim(http_client=http_client)
+                    if sleep_time < time() - token_time:
+                        logger.info(f"{self.session_name} | Sleep <light-yellow>{int(sleep_time)}</light-yellow> seconds "
+                                    f"before moon claiming")
+                        await asyncio.sleep(delay=sleep_time)
+                        await self.moon_claim(http_client=http_client)
             else:
                 logger.warning(f"{self.session_name} | Can't start farming | Status: <r>{status}</r>")
-                return False
 
         except Exception as error:
             logger.error(f"{self.session_name} | Unknown error when Start Farming: {error}")
@@ -264,9 +279,15 @@ class Tapper:
     async def moon_claim(self, http_client: aiohttp.ClientSession, retry: int = 0):
         try:
             await asyncio.sleep(randint(3, 5))
+            refresh_data = await self.refresh(http_client=http_client)
+
+            if refresh_data:
+                http_client.headers["Authorization"] = refresh_data["type"] + " " + refresh_data["access_token"]
+            else:
+                return
+
             random_hash = generate_time_hash()
-            response = await http_client.post('https://api.mmbump.pro/v1/farming/moon-claim',
-                                              json={'hash': random_hash})
+            response = await http_client.post('https://api.mmbump.pro/v1/farming/moon-claim', json={'hash': random_hash})
             if response.status == 401 and retry < 3:
                 logger.warning(f"{self.session_name} | UnAuthorized error when Moon Claiming. Attempt {retry}...")
                 retry += 1
@@ -314,7 +335,8 @@ class Tapper:
 
         while True:
             try:
-                if time() - access_token_created_time >= randint(3500, 3700):
+                token_live_time = randint(3500, 3600)
+                if time() - access_token_created_time >= token_live_time:
                     tg_web_data, user_id = await self.get_tg_web_data(proxy=proxy)
                     http_client.headers["User_auth:"] = user_id
                     login_data = await self.login(http_client=http_client, tg_web_data=tg_web_data)
@@ -362,9 +384,9 @@ class Tapper:
                 session = info_data['session']
                 status = session['status']
 
-                sleep_time = randint(3500, 3600)
+                sleep_time = token_live_time
                 if status == "await":
-                    await self.start_farming(http_client=http_client)
+                    await self.start_farming(http_client=http_client, token_time=access_token_created_time)
 
                 if status == "inProgress":
                     moon_time = session['moon_time']
@@ -372,19 +394,25 @@ class Tapper:
                     start_at = session['start_at']
                     finish_at = start_at + settings.FARM_TIME
                     time_left = finish_at - time()
-                    if 0 < delta_time < 3600:
-                        logger.info(
-                            f"{self.session_name} | Sleep <light-yellow>{int(delta_time)}</light-yellow> seconds "
-                            f"before moon claiming")
-                        await asyncio.sleep(delay=delta_time)
-                        await self.moon_claim(http_client=http_client)
+
+                    if settings.CLAIM_MOON and delta_time > 0:
+                        if delta_time < token_live_time + access_token_created_time - time():
+                            logger.info(
+                                f"{self.session_name} | Sleep <light-yellow>{int(delta_time)}</light-yellow> seconds"
+                                f" before moon claiming")
+                            await asyncio.sleep(delay=delta_time)
+                            await self.moon_claim(http_client=http_client)
+                        else:
+                            logger.info(
+                                f"{self.session_name} | <light-yellow>{int(delta_time)}</light-yellow> seconds"
+                                f" before moon claiming")
 
                     if time_left < 0:
                         resp_status = await self.finish_farming(http_client=http_client,
                                                                 boost=info_data['info'].get('boost'))
                         if resp_status:
                             await asyncio.sleep(delay=randint(3, 5))
-                            await self.start_farming(http_client=http_client)
+                            await self.start_farming(http_client=http_client, token_time=access_token_created_time)
                     else:
                         sleep_time = sleep_time if time_left > 3600 else time_left
                         logger.info(
