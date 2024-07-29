@@ -3,7 +3,7 @@ import random
 
 def generate_random_user_agent(device_type='android', browser_type='chrome'):
     chrome_versions = list(range(110, 127))
-    firefox_versions = list(range(90, 100))  # Last 10 versions of Firefox
+    firefox_versions = list(range(90, 100))
 
     if browser_type == 'chrome':
         major_version = random.choice(chrome_versions)

@@ -1,4 +1,4 @@
-[![Static Badge](https://img.shields.io/badge/Telegram-Bot%20Link-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/MMproBump_bot?start=ref_7420057470)
+[![Static Badge](https://img.shields.io/badge/Telegram-Bot%20Link-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/OKX_official_bot/OKX_Racer?startapp=linkCode_116016253)
 
 ## Recommendation before use
 
@@ -13,23 +13,19 @@
 | Proxy binding to session                                  |     ✅     |
 | Support for tdata / pyrogram .session / telethon .session |     ✅     |
 | Auto-farming                                              |     ✅     |
-| Auto-taps                                                 |     ✅     |
-| Collect bonus in every farming cycle                      |     ✅     |
-| Auto-tasks (twitter only)                                 |     ✅     |
+| Auto-tasks (except KYC)                                   |     ✅     |
 | Auto-boost                                                |     ✅     |
 | Auto-daily                                                |     ✅     |
 
 
-## [Settings](https://github.com/Desamod/MMproBump_bot/blob/master/.env-example/)
+## [Settings](https://github.com/Desamod/OkxRacerBot/blob/master/.env-example/)
 | Settings                |                                 Description                                 |
 |-------------------------|:---------------------------------------------------------------------------:|
 | **API_ID / API_HASH**   | Platform data from which to run the Telegram session (by default - android) |
-| **TAPS_COUNT**          | How much clicks bot will get in farm cycle (by default - [100000, 500000])  |
-| **CLAIM_MOON**          |                Collecting a farm bonus  (by default - True)                 |
-| **MOON_BONUS**          |                   Moon-Bonus count (by default - 1000000)                   |
-| **BUY_BOOST**           |                     Buying a boost (by default - True)                      |
-| **DEFAULT_BOOST**       |               Boost type ("x2"/"x3"/"x5") (by default - "x5")               |
-| **AUTO_TASK**           |                 Auto tasks (Twitter only) (default - True)                  |
+| **SLEEP_TIME**          |             Sleep time between cycles (by default - [300, 500])             |
+| **AUTO_BOOST**          |                     Buying a boost (by default - True)                      |
+| **BOOSTERS**            |              Types of boost to buy (for all by default - True)              |
+| **AUTO_TASK**           |                Auto tasks (except KYC task) (default - True)                |
 | **USE_REF**             |                      Using a ref link (default - True)                      |
 | **USE_PROXY_FROM_FILE** | Whether to use a proxy from the bot/config/proxies.txt file (True / False)  |
 
@@ -47,10 +43,10 @@ Before you begin, make sure you have the following installed:
 3. Record the API_ID and API_HASH provided after registering your application in the .env file.
 
 ## Installation
-You can download the [**repository**](https://github.com/Desamod/MMproBump_bot) by cloning it to your system and installing the necessary dependencies:
+You can download the [**repository**](https://github.com/Desamod/OkxRacerBot) by cloning it to your system and installing the necessary dependencies:
 ```shell
-git clone https://github.com/Desamod/MMproBump_bot.git
-cd MMproBump_bot
+git https://github.com/Desamod/OkxRacerBot
+cd OkxRacerBot
 ```
 
 Then you can do automatic installation by typing:
@@ -77,9 +73,9 @@ python3 main.py
 
 You can also use arguments for quick start, for example:
 ```shell
-~/MMproBump_bot >>> python3 main.py --action (1/2)
+~/OkxRacerBot >>> python3 main.py --action (1/2)
 # Or
-~/MMproBump_bot >>> python3 main.py -a (1/2)
+~/OkxRacerBot >>> python3 main.py -a (1/2)
 
 # 1 - Run clicker
 # 2 - Creates a session
@@ -97,9 +93,9 @@ python main.py
 
 You can also use arguments for quick start, for example:
 ```shell
-~/MMproBump_bot >>> python main.py --action (1/2)
+~/OkxRacerBot >>> python main.py --action (1/2)
 # Or
-~/MMproBump_bot >>> python main.py -a (1/2)
+~/OkxRacerBot >>> python main.py -a (1/2)
 
 # 1 - Run clicker
 # 2 - Creates a session
@@ -111,6 +107,5 @@ For support or questions, you can contact me
 
 [![Static Badge](https://img.shields.io/badge/Telegram-Me-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/DrQwertySoul)
 
-Inspired by Hidden Code community [HiddenCode](https://t.me/hidden_coding)
 
 

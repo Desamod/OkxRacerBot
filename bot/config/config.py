@@ -7,19 +7,16 @@ class Settings(BaseSettings):
     API_ID: int
     API_HASH: str
 
-    FARM_TIME: int = 21600                # 6 hours
-    TAPS_COUNT: list[int] = [100000, 500000]
-    MOON_BONUS: int = 1000000
-    BUY_BOOST: bool = True
+    SLEEP_TIME: list[int] = [300, 500]
+    AUTO_BOOST: bool = True
     AUTO_TASK: bool = True
-    CLAIM_MOON: bool = True
     USE_REF: bool = True
-    DEFAULT_BOOST: str = "x5"
     BOOSTERS: dict = {
-        "x2": 4000000,
-        "x3": 30000000,
-        "x5": 200000000
+        "Reload Fuel Tank": True,
+        "Fuel Tank": True,
+        "Turbo Charger": True,
     }
+
     USE_PROXY_FROM_FILE: bool = False
 
 
