@@ -56,7 +56,7 @@ class Tapper:
                             functions.messages.StartBot(
                                 bot=peer,
                                 peer=peer,
-                                start_param=get_link_code(),
+                                start_param='linkCode_' + get_link_code(),
                                 random_id=randint(1, 9999999),
                             )
                         )
