@@ -44,10 +44,7 @@ class Tapper:
         self.tg_client.proxy = proxy_dict
 
         try:
-            with_tg = True
-
             if not self.tg_client.is_connected:
-                with_tg = False
                 try:
                     await self.tg_client.connect()
                     if settings.USE_REF:
@@ -219,7 +216,7 @@ class Tapper:
                                               f't={int(time() * 1000)}', json=json_data)
 
             response_json = await response.json()
-            if response_json['code'] == 499004:
+            if response_json.get('code') == 499004:
                 logger.warning(f"{self.session_name} | Authorization error | Refreshing token...")
                 return None
 
