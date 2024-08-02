@@ -142,7 +142,7 @@ class Tapper:
 
             tasks = response_json['data']
             for task in tasks:
-                if task['state'] == 0 and task['id'] != 5:
+                if task['state'] == 0 and task['id'] != 5 and task['id'] != 9:
                     logger.info(f"{self.session_name} | Performing task <lc>{task['context']['name']}</lc>...")
                     response_data = await self.perform_task(http_client=http_client, task_id=task['id'])
                     if response_data:
@@ -205,13 +205,32 @@ class Tapper:
         except Exception as e:
             logger.error(f"{self.session_name} | Unknown error while buying boost | Error: {e}")
 
+    async def get_price(self, http_client: aiohttp.ClientSession):
+        try:
+            response = await http_client.get(f'https://www.okx.com/api/v5/market/ticker?instId=BTC-USDT')
+            response_json = await response.json()
+            if response_json.get('code') == '0':
+                price = response_json['data'][0]['last']
+                return float(price)
+            else:
+                await asyncio.sleep(delay=3)
+                return await self.get_price(http_client=http_client)
+        except Exception as error:
+            logger.error(f"{self.session_name} | Unknown error when getting price: {error}")
+            await asyncio.sleep(delay=3)
+
     async def make_assess(self, http_client: aiohttp.ClientSession):
         try:
+            price = await self.get_price(http_client=http_client)
+            await asyncio.sleep(delay=4)
+            new_price = await self.get_price(http_client=http_client)
+            predict = 0 if price > new_price else 1
             json_data = {
                 "extUserId": self.user_id,
-                "predict": randint(0, 1),
+                "predict": predict,
                 "gameId": 1
             }
+
             response = await http_client.post(f'https://www.okx.com/priapi/v1/affiliate/game/racer/assess?'
                                               f't={int(time() * 1000)}', json=json_data)
 
@@ -221,13 +240,13 @@ class Tapper:
                 return None
 
             response.raise_for_status()
-
             response_data = response_json['data']
             if response_data["won"]:
                 added_points = response_data['basePoint'] * response_data['multiplier']
                 logger.success(f"{self.session_name} | Successful prediction | Got <y>{added_points}</y> points | "
                                f"Balance: <e>{response_data['balancePoints']}</e> | "
-                               f"Chances: <m>{response_data['numChance']}</m>")
+                               f"Chances: <m>{response_data['numChance']}</m> | "
+                               f"Combo: <m>x{response_data['curCombo']}</m>")
             else:
                 logger.info(
                     f"{self.session_name} | Wrong prediction | Balance: <e>{response_data['balancePoints']}</e> |"
@@ -300,11 +319,12 @@ class Tapper:
                             if self.can_buy_boost(balance, boost):
                                 if await self.buy_boost(http_client=http_client, boost_id=boost['id'],
                                                         boost_name=boost['context']['name']):
+                                    sleep_time = randint(1, 3)
                                     continue
                             else:
                                 break
 
-                    await asyncio.sleep(delay=randint(10, 15))
+                    await asyncio.sleep(delay=randint(1, 3))
 
                 logger.info(f"{self.session_name} | Sleep <y>{sleep_time}</y> seconds")
                 await asyncio.sleep(delay=sleep_time)
