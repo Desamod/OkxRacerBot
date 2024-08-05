@@ -28,6 +28,7 @@
 | **AUTO_TASK**           |                Auto tasks (except KYC task) (default - True)                |
 | **USE_REF**             |                      Using a ref link (default - True)                      |
 | **RANDOM_PREDICTION**   |                Using random for prediction (default - True)                 |
+| **MAX_COMBO_COUNT**     |                       Max combo count (default - 28)                        |
 | **USE_PROXY_FROM_FILE** | Whether to use a proxy from the bot/config/proxies.txt file (True / False)  |
 
 ## Quick Start 📚

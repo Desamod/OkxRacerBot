@@ -317,6 +317,10 @@ class Tapper:
                         await asyncio.sleep(delay=sleep_time)
                         break
                     else:
+                        combo_count = response_data.get('curCombo')
+                        if combo_count and combo_count >= settings.MAX_COMBO_COUNT:
+                            logger.info(f"{self.session_name} | Combo count limit reached | Abort predictions..")
+                            break
                         if response_data.get('numChance') == 0 and settings.AUTO_BOOST:
                             boost = next((boost for boost in boosts if boost['id'] == 1), None)
                             if self.can_buy_boost(balance, boost):
