@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     AUTO_BOOST: bool = True
     AUTO_TASK: bool = True
     USE_REF: bool = True
+    RANDOM_PREDICTION: bool = True
     BOOSTERS: dict = {
         "Reload Fuel Tank": True,
         "Fuel Tank": True,

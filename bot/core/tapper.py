@@ -221,10 +221,13 @@ class Tapper:
 
     async def make_assess(self, http_client: aiohttp.ClientSession):
         try:
-            price = await self.get_price(http_client=http_client)
-            await asyncio.sleep(delay=4)
-            new_price = await self.get_price(http_client=http_client)
-            predict = 0 if price > new_price else 1
+            if settings.RANDOM_PREDICTION:
+                predict = randint(0, 1)
+            else:
+                price = await self.get_price(http_client=http_client)
+                await asyncio.sleep(delay=3)
+                new_price = await self.get_price(http_client=http_client)
+                predict = 0 if price > new_price else 1
             json_data = {
                 "extUserId": self.user_id,
                 "predict": predict,

@@ -27,6 +27,7 @@
 | **BOOSTERS**            |              Types of boost to buy (for all by default - True)              |
 | **AUTO_TASK**           |                Auto tasks (except KYC task) (default - True)                |
 | **USE_REF**             |                      Using a ref link (default - True)                      |
+| **RANDOM_PREDICTION**   |                Using random for prediction (default - True)                 |
 | **USE_PROXY_FROM_FILE** | Whether to use a proxy from the bot/config/proxies.txt file (True / False)  |
 
 ## Quick Start 📚
