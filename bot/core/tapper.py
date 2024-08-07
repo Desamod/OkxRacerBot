@@ -223,6 +223,7 @@ class Tapper:
         try:
             if settings.RANDOM_PREDICTION:
                 predict = randint(0, 1)
+                await asyncio.sleep(delay=randint(4, 6))
             else:
                 price = await self.get_price(http_client=http_client)
                 await asyncio.sleep(delay=3)
