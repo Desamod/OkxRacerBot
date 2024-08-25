@@ -1,4 +1,5 @@
 @echo off
+title OKX Racer
 
 if not exist venv (
     echo Creating virtual environment...

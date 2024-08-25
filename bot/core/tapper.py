@@ -47,16 +47,23 @@ class Tapper:
             if not self.tg_client.is_connected:
                 try:
                     await self.tg_client.connect()
-                    if settings.USE_REF:
-                        peer = await self.tg_client.resolve_peer('OKX_official_bot')
-                        await self.tg_client.invoke(
-                            functions.messages.StartBot(
-                                bot=peer,
-                                peer=peer,
-                                start_param='linkCode_' + get_link_code(),
-                                random_id=randint(1, 9999999),
+                    start_command_found = False
+                    async for message in self.tg_client.get_chat_history('OKX_official_bot'):
+                        if (message.text and message.text.startswith('/start')) or (message.caption and message.caption.startswith('/start')):
+                            start_command_found = True
+                            break
+
+                    if not start_command_found:
+                        if settings.USE_REF:
+                            peer = await self.tg_client.resolve_peer('OKX_official_bot')
+                            await self.tg_client.invoke(
+                                functions.messages.StartBot(
+                                    bot=peer,
+                                    peer=peer,
+                                    start_param='linkCode_' + get_link_code(),
+                                    random_id=randint(1, 9999999),
+                                )
                             )
-                        )
 
                 except (Unauthorized, UserDeactivated, AuthKeyUnregistered):
                     raise InvalidSession(self.session_name)

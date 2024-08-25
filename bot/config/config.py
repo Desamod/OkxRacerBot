@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     API_HASH: str
 
     SLEEP_TIME: list[int] = [300, 500]
+    START_DELAY: list[int] = [25, 55]
     MAX_COMBO_COUNT: int = 28
     AUTO_BOOST: bool = True
     AUTO_TASK: bool = True
