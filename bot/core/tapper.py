@@ -210,7 +210,7 @@ class Tapper:
             return False
 
         except Exception as e:
-            logger.error(f"{self.session_name} | Unknown error while buying boost | Error: {e}")
+            logger.error(f"{self.session_name} | Unknown error while buying boost: {boost_id}| Error: {e}")
 
     async def get_price(self, http_client: aiohttp.ClientSession):
         try:
@@ -334,6 +334,8 @@ class Tapper:
                             if self.can_buy_boost(balance, boost):
                                 if await self.buy_boost(http_client=http_client, boost_id=boost['id'],
                                                         boost_name=boost['context']['name']):
+                                    await asyncio.sleep(randint(1, 3))
+                                    boosts = await self.get_boosts(http_client=http_client)
                                     sleep_time = randint(1, 3)
                                     continue
                             else:
