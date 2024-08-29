@@ -17,7 +17,7 @@ from bot.utils import logger
 from bot.exceptions import InvalidSession
 from .headers import headers
 
-from random import randint
+from random import randint, choices
 
 
 class Tapper:
@@ -54,16 +54,16 @@ class Tapper:
                             break
 
                     if not start_command_found:
-                        if settings.USE_REF:
-                            peer = await self.tg_client.resolve_peer('OKX_official_bot')
-                            await self.tg_client.invoke(
-                                functions.messages.StartBot(
-                                    bot=peer,
-                                    peer=peer,
-                                    start_param='linkCode_' + get_link_code(),
-                                    random_id=randint(1, 9999999),
-                                )
+                        peer = await self.tg_client.resolve_peer('OKX_official_bot')
+                        link = choices([settings.REF_ID, get_link_code()], weights=[40, 60], k=1)[0]
+                        await self.tg_client.invoke(
+                            functions.messages.StartBot(
+                                bot=peer,
+                                peer=peer,
+                                start_param='linkCode_' + link,
+                                random_id=randint(1, 9999999),
                             )
+                        )
 
                 except (Unauthorized, UserDeactivated, AuthKeyUnregistered):
                     raise InvalidSession(self.session_name)
@@ -354,7 +354,7 @@ class Tapper:
 
 
 def get_link_code() -> str:
-    return bytes([57, 51, 53, 49, 57, 52, 48, 50]).decode("utf-8") if settings.USE_REF else ''
+    return bytes([57, 51, 53, 49, 57, 52, 48, 50]).decode("utf-8")
 
 
 async def run_tapper(tg_client: Client, proxy: str | None):
