@@ -188,6 +188,19 @@ class Tapper:
             logger.error(f"{self.session_name} | Unknown error while getting boosts | Error: {e}")
 
     def can_buy_boost(self, balance: str, boost: dict) -> bool:
+        match boost['context']['name']:
+            case 'Fuel Tank':
+                if not settings.FUEL_TANK_BOOST:
+                    return False
+            case 'Reload Fuel Tank':
+                if not settings.RELOAD_TANK_BOOST:
+                    return False
+            case 'Turbo Charger':
+                if not settings.TURBO_CHARGER_BOOST:
+                    return False
+            case _:
+                return False
+
         cost = boost['pointCost']
         cur_stage = boost['curStage']
         total_stage = boost['totalStage']
@@ -299,18 +312,17 @@ class Tapper:
                 refresh_time = user_info['data']['secondToRefresh']
                 balance = user_info['data']['balancePoints']
 
-                if settings.AUTO_BOOST:
-                    boosts = await self.get_boosts(http_client=http_client)
-                    for boost in boosts:
-                        boost_name = boost['context']['name']
-                        boost_id = boost['id']
-                        if (boost_id == 2 or boost_id == 3) and settings.BOOSTERS[boost_name]:
-                            if self.can_buy_boost(balance, boost):
-                                result = await self.buy_boost(http_client=http_client, boost_id=boost_id,
-                                                              boost_name=boost_name)
-                                if result:
-                                    logger.info(f"{self.session_name} | <lc>{boost_name}</lc> upgraded to "
-                                                f"<m>{boost['curStage'] + 1}</m> lvl")
+                boosts = await self.get_boosts(http_client=http_client)
+                for boost in boosts:
+                    boost_name = boost['context']['name']
+                    boost_id = boost['id']
+                    if boost_id == 2 or boost_id == 3:
+                        if self.can_buy_boost(balance, boost):
+                            result = await self.buy_boost(http_client=http_client, boost_id=boost_id,
+                                                          boost_name=boost_name)
+                            if result:
+                                logger.info(f"{self.session_name} | <lc>{boost_name}</lc> upgraded to "
+                                            f"<m>{boost['curStage'] + 1}</m> lvl")
 
                 if chances == 0 and refresh_time > 0:
                     logger.info(f"{self.session_name} | Refresh chances | Sleep <y>{refresh_time}</y> seconds")
@@ -329,7 +341,7 @@ class Tapper:
                         if combo_count and combo_count >= settings.MAX_COMBO_COUNT:
                             logger.info(f"{self.session_name} | Combo count limit reached | Abort predictions..")
                             break
-                        if response_data.get('numChance') == 0 and settings.AUTO_BOOST:
+                        if response_data.get('numChance') == 0:
                             boost = next((boost for boost in boosts if boost['id'] == 1), None)
                             if self.can_buy_boost(balance, boost):
                                 if await self.buy_boost(http_client=http_client, boost_id=boost['id'],

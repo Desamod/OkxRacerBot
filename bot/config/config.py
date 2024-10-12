@@ -10,16 +10,12 @@ class Settings(BaseSettings):
     SLEEP_TIME: list[int] = [300, 500]
     START_DELAY: list[int] = [25, 55]
     MAX_COMBO_COUNT: int = 28
-    AUTO_BOOST: bool = True
     AUTO_TASK: bool = True
     REF_ID: str = "134115058"
     RANDOM_PREDICTION: bool = True
-    BOOSTERS: dict = {
-        "Reload Fuel Tank": True,
-        "Fuel Tank": True,
-        "Turbo Charger": True,
-    }
-
+    FUEL_TANK_BOOST: bool = True
+    RELOAD_TANK_BOOST: bool = True
+    TURBO_CHARGER_BOOST: bool = True
     USE_PROXY_FROM_FILE: bool = False
 
 

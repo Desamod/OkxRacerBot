@@ -23,8 +23,9 @@
 |-------------------------|:---------------------------------------------------------------------------:|
 | **API_ID / API_HASH**   | Platform data from which to run the Telegram session (by default - android) |
 | **SLEEP_TIME**          |             Sleep time between cycles (by default - [300, 500])             |
-| **AUTO_BOOST**          |                     Buying a boost (by default - True)                      |
-| **BOOSTERS**            |              Types of boost to buy (for all by default - True)              |
+| **FUEL_TANK_BOOST**     |                 Buying Fuel tank boost (by default - True)                  |
+| **RELOAD_TANK_BOOST**   |                Buying Reload tank boost (by default - True)                 |
+| **TURBO_CHARGER_BOOST** |               Buying Turbo charger boost (by default - True)                |
 | **AUTO_TASK**           |                Auto tasks (except KYC task) (default - True)                |
 | **REF_ID**              |                                Referral link                                |
 | **RANDOM_PREDICTION**   |                Using random for prediction (default - True)                 |
