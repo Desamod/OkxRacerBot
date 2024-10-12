@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     MAX_COMBO_COUNT: int = 28
     AUTO_BOOST: bool = True
     AUTO_TASK: bool = True
-    REF_ID: str = "116016253"
+    REF_ID: str = "134115058"
     RANDOM_PREDICTION: bool = True
     BOOSTERS: dict = {
         "Reload Fuel Tank": True,
