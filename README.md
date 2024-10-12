@@ -1,4 +1,4 @@
-[![Static Badge](https://img.shields.io/badge/Telegram-Bot%20Link-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/OKX_official_bot/OKX_Racer?startapp=linkCode_116016253)
+[![Static Badge](https://img.shields.io/badge/Telegram-Bot%20Link-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/OKX_official_bot/OKX_Racer?startapp=linkCode_134115058)
 
 ## Recommendation before use
 
@@ -7,15 +7,15 @@
 > 🇷 🇺 README in russian available [here](README-RU.md)
 
 ## Features  
-| Feature                                                   | Supported |
-|-----------------------------------------------------------|:---------:|
-| Multithreading                                            |     ✅     |
-| Proxy binding to session                                  |     ✅     |
-| Support for tdata / pyrogram .session / telethon .session |     ✅     |
-| Auto-farming                                              |     ✅     |
-| Auto-tasks (except KYC)                                   |     ✅     |
-| Auto-boost                                                |     ✅     |
-| Auto-daily                                                |     ✅     |
+| Feature                          | Supported |
+|----------------------------------|:---------:|
+| Multithreading                   |     ✅     |
+| Proxy binding to session         |     ✅     |
+| Support for  pyrogram .session   |     ✅     |
+| Auto-farming                     |     ✅     |
+| Auto-tasks (except KYC)          |     ✅     |
+| Auto-boost                       |     ✅     |
+| Auto-daily                       |     ✅     |
 
 
 ## [Settings](https://github.com/Desamod/OkxRacerBot/blob/master/.env-example/)
@@ -107,5 +107,5 @@ You can also use arguments for quick start, for example:
 
 For support or questions, you can contact me
 
-[![Static Badge](https://img.shields.io/badge/Telegram-Channel-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/desforge_crypto)
+[![Static Badge](https://img.shields.io/badge/Telegram-Channel-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/desforge_cryptwo)
 

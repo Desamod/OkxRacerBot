@@ -1,4 +1,4 @@
-[![Static Badge](https://img.shields.io/badge/Telegram-Bot%20Link-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/OKX_official_bot/OKX_Racer?startapp=linkCode_116016253)
+[![Static Badge](https://img.shields.io/badge/Telegram-Bot%20Link-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/OKX_official_bot/OKX_Racer?startapp=linkCode_134115058)
 
 ## Рекомендация перед использованием
 
@@ -7,15 +7,15 @@
 > 🇪🇳 README in english available [here](README.md)
 
 ## Функционал  
-| Функционал                                              | Поддерживается |
-|---------------------------------------------------------|:------------:|
-| Многопоточность                                         |       ✅      |
-| Поддержка tdata / pyrogram .session / telethon .session |       ✅      |
-| Привязка прокси к сессии                                |       ✅      |
-| Автофарминг                                             |       ✅      |
-| Авто таски (кроме KYC)                                  |       ✅      |
-| Автопокупка буста                                       |       ✅      |
-| Сбор ежедневных наград                                  |       ✅      |
+| Функционал                   | Поддерживается |
+|------------------------------|:------------:|
+| Многопоточность              |       ✅      |
+| Поддержка pyrogram .session  |       ✅      |
+| Привязка прокси к сессии     |       ✅      |
+| Автофарминг                  |       ✅      |
+| Авто таски (кроме KYC)       |       ✅      |
+| Автопокупка буста            |       ✅      |
+| Сбор ежедневных наград       |       ✅      |
 
 
 
@@ -112,4 +112,4 @@ python main.py
 
 Для поддержки или вопросов, вы можете связаться со мной
 
-[![Static Badge](https://img.shields.io/badge/Telegram-Channel-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/desforge_crypto)
+[![Static Badge](https://img.shields.io/badge/Telegram-Channel-Link?style=for-the-badge&logo=Telegram&logoColor=white&logoSize=auto&color=blue)](https://t.me/desforge_cryptwo)
